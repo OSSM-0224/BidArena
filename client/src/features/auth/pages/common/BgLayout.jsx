@@ -38,7 +38,7 @@ return (
         </div>
       </header>
  
-      <main className="flex-grow flex items-stretch relative z-10">
+      <main className="grow flex items-stretch relative z-10">
         {/* Left technical display */}
         <div className="hidden lg:flex w-[40%] flex-col justify-center px-margin-desktop space-y-12 border-r border-outline-variant/30">
           <div className="space-y-4">
@@ -46,7 +46,7 @@ return (
               <span className="px-2 py-0.5 border border-primary/40 rounded">SYSTEM_ONBOARDING</span>
               <span>{eyebrow}</span>
             </div>
-            <h1 className="text-[48px] leading-[56px] tracking-[-0.02em] font-extrabold text-on-surface max-w-md">
+            <h1 className="text-[48px] leading-14 tracking-[-0.02em] font-extrabold text-on-surface max-w-md">
               Initialize High-Clearance Protocol.
             </h1>
             <p className="text-lg text-on-surface-variant max-w-sm">
@@ -54,7 +54,7 @@ return (
             </p>
           </div>
  
-          <div className="terminal-glass p-6 rounded-lg tech-border tech-border-tl tech-border-br font-label-mono text-[12px] text-primary/70 space-y-2 overflow-hidden max-h-[300px]">
+          <div className="terminal-glass p-6 rounded-lg tech-border tech-border-tl tech-border-br font-label-mono text-[12px] text-primary/70 space-y-2 overflow-hidden max-h-75">
             <div className="flex justify-between items-center border-b border-primary/20 pb-2 mb-4">
               <span className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-[16px]">terminal</span> LIVE_FEED
@@ -77,8 +77,8 @@ return (
         </div>
  
         {/* Right content — the form goes here */}
-        <div className="flex-grow flex items-center justify-center p-margin-mobile">
-          <div className="w-full max-w-[540px] relative">
+        <div className="grow flex items-center justify-center p-margin-mobile">
+          <div className="w-full max-w-135 relative">
             <div className="absolute -top-4 -left-4 font-label-mono text-[10px] text-outline/40">
               COORD: 40.7128° N
             </div>
