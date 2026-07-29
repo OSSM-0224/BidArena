@@ -6,11 +6,21 @@ const useAuth = () => {
   let navigate = useNavigate();
   const {register,handleSubmit,formState:{errors}} = useForm();
 
+  const onLoginSubmit = (data) => {
+    console.log(data);
+  }
+
+  const onRegisterSubmit = (data) => {
+    console.log(data);
+  }
+
   return {
     register,
     handleSubmit,
     errors,
     navigate,
+    onLoginSubmit,
+    onRegisterSubmit
   }
 }
 

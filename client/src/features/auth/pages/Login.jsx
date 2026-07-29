@@ -4,18 +4,12 @@ import Input from '@/components/Input';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import BgLayout from './common/BgLayout';
+import useAuth from '../hooks/useAuth';
 
 const Login = () => {
  const [success, setSuccess] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
- 
-  const onSubmit = async (data) => {
-    console.log(data)
-  };
+
+ const {errors,handleSubmit,navigate,register,onLoginSubmit} = useAuth();
  
   return (
     <BgLayout eyebrow="CMD://RESUME_SESSION">
@@ -32,7 +26,7 @@ const Login = () => {
         </div>
       </div>
  
-      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form className="space-y-6" onSubmit={handleSubmit(onLoginSubmit)} noValidate>
         <Input
           label="Communication Node"
           tag="[REQ_MAIL_01]"
@@ -66,16 +60,12 @@ const Login = () => {
             />
             Remember Node
           </label>
-          <a href="#" className="text-[12px] font-label-mono text-primary hover:underline uppercase tracking-widest">
-            Reset Key
-          </a>
         </div>
  
         <div className="pt-4">
           <Button
             type="submit"
             icon="encrypted"
-            loading={isSubmitting}
             loadingText="VERIFYING_IDENTITY..."
             success={success}
             successText="ACCESS_GRANTED"
@@ -89,7 +79,7 @@ const Login = () => {
         <span className="font-label-mono font-medium text-[11px] text-outline uppercase">New Recruit?</span>
         <a
           className="text-secondary font-label-mono text-[12px] hover:underline uppercase tracking-widest flex items-center gap-2"
-          href="/register"
+          onClick={() => navigate('/register')}
         >
           Create Identity
           <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
