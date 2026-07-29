@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config/env');
-const userDao = require('../dao/user.dao');
-const ApiResponse = require('../utils/apiResponse');
+import jwt from 'jsonwebtoken';
+import config from '../config/env.js';
+import { findUserById } from '../dao/user.dao.js';
+import ApiResponse from '../utils/apiResponse.js';
 
 const authenticate = async (req, res, next) => {
   try {
@@ -19,7 +19,7 @@ const authenticate = async (req, res, next) => {
 
     const decoded = jwt.verify(token, config.jwtSecret);
 
-    const user = await userDao.findUserById(decoded.id);
+    const user = await findUserById(decoded.id);
     if (!user) {
       return ApiResponse.error(res, 'User belonging to this token no longer exists', 401);
     }
@@ -34,4 +34,4 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-module.exports = authenticate;
+export default authenticate;
