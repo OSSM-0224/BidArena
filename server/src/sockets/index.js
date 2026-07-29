@@ -6,6 +6,11 @@ import { registerBidHandlers } from './bid.handler.js';
 import { registerReconnectionHandlers } from './reconnection.handler.js';
 import timerService from '../services/timer.service.js';
 
+/*
+ * Socket middleware — authenticate every connection via JWT.
+ * The client must provide the token as `auth.token` during the handshake
+ * or as a query parameter `?token=...`.
+ */
 const authenticateSocket = async (socket, next) => {
   try {
     const token = socket.handshake.auth?.token || socket.handshake.query?.token;
@@ -31,6 +36,10 @@ const authenticateSocket = async (socket, next) => {
   }
 };
 
+/*
+ * Initialise all socket event handlers and start timers for active auctions.
+ * Called once during server bootstrap after Socket.io is created.
+ */
 export const setupSocketHandlers = (io) => {
   io.use(authenticateSocket);
 
@@ -44,6 +53,7 @@ export const setupSocketHandlers = (io) => {
     socket.emit('connected', { userId: socket.user._id });
   });
 
+  // Start timers for any active auctions that survived a restart
   timerService.initActiveTimers().catch((err) => {
     console.error('[Socket] Failed to initialise auction timers:', err.message);
   });
