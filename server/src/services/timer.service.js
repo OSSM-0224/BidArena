@@ -72,6 +72,19 @@ class TimerService {
   }
 
   /*
+   * Atomically claim the 'completed' status via findOneAndUpdate with
+   * a { status: 'active' } filter.  If a concurrent bid changed the
+   * auction between our read and this write, the atomic claim fails
+   * and we bail — the bidder won the race.
+   *
+   * Winner is determined from the persisted Bid records (not from the
+   * auction's in-memory highestBidder), because the Bid model is the
+   * authoritative event-sourced record.
+   */
+  async closeAuction(auctionId) {
+    const claimed = await auctionDao.findAuctionByIdAndUpdateStatusIfActive(auctionId, 'completed');
+    if (!claimed) return;
+
    * Close an auction: atomically transition status to 'completed',
    * determine winner from the Bid model, create timeline event,
    * and notify the room via socket.
@@ -117,6 +130,7 @@ class TimerService {
         winningBid,
       });
     } catch {
+      // Socket.io not initialised yet
       // Socket.io not initialized yet — fine during startup
     }
 

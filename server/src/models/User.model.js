@@ -1,6 +1,21 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+const refreshTokenSchema = new mongoose.Schema({
+  token: {
+    type: String,
+    required: true,
+  },
+  device: {
+    type: String,
+    default: 'unknown',
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -25,6 +40,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin'],
     default: 'user',
+  },
+  refreshTokens: {
+    type: [refreshTokenSchema],
+    default: [],
   },
   auctionsCreated: {
     type: Number,

@@ -31,6 +31,8 @@ export const registerAuctionRoomHandlers = (io, socket) => {
       socket.join(auctionId);
       socket.currentAuctionId = auctionId;
 
+      auctionDao.incrementSpectatorCount(auctionId).catch(() => {});
+
       // Increment spectator count (fire-and-forget)
       auctionDao.incrementSpectatorCount(auctionId).catch(() => {});
 
@@ -42,6 +44,7 @@ export const registerAuctionRoomHandlers = (io, socket) => {
 
       await auction.populate(['seller', 'highestBidder']);
 
+      socket.emit('room-state', { auction, bids, timeline });
       const roomState = {
         auction,
         bids,

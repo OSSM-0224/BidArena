@@ -1,40 +1,73 @@
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiResponse from '../utils/apiResponse.js';
 import authService from '../services/auth.service.js';
-import config from '../config/env.js';
-
-const cookieOptions = {
-  httpOnly: true,
-  secure: config.nodeEnv === 'production',
-  sameSite: 'strict',
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-};
+import {
+  accessTokenCookieOptions,
+  refreshTokenCookieOptions,
+  clearAccessTokenCookie,
+  clearRefreshTokenCookie,
+} from '../utils/cookieHelper.js';
 
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-  const { user, token } = await authService.registerUser({ name, email, password });
+  const device = req.headers['user-agent'] || 'unknown';
+  const { user, accessToken, refreshToken } = await authService.registerUser(req.body, device);
 
-  res.cookie('token', token, cookieOptions);
+  res.cookie('accessToken', accessToken, accessTokenCookieOptions);
+  res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
 
-  ApiResponse.success(res, { user, token }, 'Registration successful', 201);
+  ApiResponse.success(res, { user, accessToken }, 'Registration successful', 201);
 });
 
 export const login = asyncHandler(async (req, res) => {
+  const device = req.headers['user-agent'] || 'unknown';
   const { email, password } = req.body;
-  const { user, token } = await authService.loginUser(email, password);
+  const { user, accessToken, refreshToken } = await authService.loginUser(email, password, device);
 
-  res.cookie('token', token, cookieOptions);
+  res.cookie('accessToken', accessToken, accessTokenCookieOptions);
+  res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
 
-  ApiResponse.success(res, { user, token }, 'Login successful');
+  ApiResponse.success(res, { user, accessToken }, 'Login successful');
 });
 
-export const logout = asyncHandler(async (_req, res) => {
-  res.cookie('token', 'none', {
-    httpOnly: true,
-    expires: new Date(Date.now() + 5 * 1000),
-  });
+export const refresh = asyncHandler(async (req, res) => {
+  const oldRefreshToken = req.cookies?.refreshToken;
+
+  if (!oldRefreshToken) {
+    return ApiResponse.error(res, 'No refresh token provided', 401);
+  }
+
+  const device = req.headers['user-agent'] || 'unknown';
+  const { user, accessToken, refreshToken } = await authService.refreshAccessToken(oldRefreshToken, device);
+
+  res.cookie('accessToken', accessToken, accessTokenCookieOptions);
+  res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
+
+  ApiResponse.success(res, { user, accessToken }, 'Token refreshed successfully');
+});
+
+export const logout = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+  const userId = req.user?._id;
+
+  if (userId && refreshToken) {
+    await authService.logoutUser(userId, refreshToken);
+  }
+
+  res.cookie('accessToken', '', clearAccessTokenCookie);
+  res.cookie('refreshToken', '', clearRefreshTokenCookie);
 
   ApiResponse.success(res, null, 'Logged out successfully');
+});
+
+export const logoutAll = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  await authService.logoutAllSessions(userId);
+
+  res.cookie('accessToken', '', clearAccessTokenCookie);
+  res.cookie('refreshToken', '', clearRefreshTokenCookie);
+
+  ApiResponse.success(res, null, 'Logged out from all devices successfully');
 });
 
 export const getMe = asyncHandler(async (req, res) => {

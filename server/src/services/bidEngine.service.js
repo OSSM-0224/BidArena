@@ -6,6 +6,26 @@ class BidEngineService {
   /*
    * processBid — core bidding logic with atomic concurrency control.
    *
+   * ── Concurrency strategy: Atomic Compare-and-Swap ────────────────
+   *
+   * We use MongoDB's findOneAndUpdate with a conditional filter that
+   * includes the expected currentHighestBid.  The operation atomically
+   * matches-and-updates in a single round-trip:
+   *
+   *   { _id, currentHighestBid: <expected> }
+   *   → { $set: { currentHighestBid: <new>, highestBidder: <user> } }
+   *
+   * If another request changed currentHighestBid between our read and
+   * this write, the filter matches zero documents, findOneAndUpdate
+   * returns null, and we reject the bid.  The losing client receives
+   * a clear error and can retry with the latest amount.
+   *
+   * This is a lock-free approach that:
+   *   • Requires no distributed locks or queues
+   *   • Scales horizontally (MongoDB serialises the writes)
+   *   • Works correctly across multiple Node.js processes
+   */
+  async processBid(auctionId, userId, amount) {
    * ── Concurrency strategy: Atomic Compare-and-Swap ──────────────────────
    *
    * A naive approach would read the auction, check the current bid in
@@ -84,6 +104,9 @@ class BidEngineService {
     }
 
     /*
+     * Atomic compare-and-swap: only succeed if currentHighestBid
+     * hasn't changed since we read it.  If it changed, another
+     * concurrent bid already won — return null and reject.
      * 5. Atomic compare-and-swap
      *
      * Only succeed if currentHighestBid hasn't changed since we read it.

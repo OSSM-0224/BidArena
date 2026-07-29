@@ -23,6 +23,8 @@ export const registerBidHandlers = (io, socket) => {
         return;
       }
 
+      const updatedAuction = await bidEngineService.processBid(auctionId, socket.user._id, amount);
+
       // Delegates to the bid engine which does all business logic + atomic update
       const updatedAuction = await bidEngineService.processBid(auctionId, socket.user._id, amount);
 

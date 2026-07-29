@@ -1,4 +1,7 @@
 import { Server } from 'socket.io';
+
+let io = null;
+
 import config from './env.js';
 
 let io = null;
