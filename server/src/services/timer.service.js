@@ -3,26 +3,10 @@ import * as bidDao from '../dao/bid.dao.js';
 import * as timelineDao from '../dao/timeline.dao.js';
 import { getIO } from '../config/socket.js';
 
-/*
- * Timer service — server-authoritative countdown per auction.
- *
- * Timers are stored in-memory via setTimeout references keyed by auctionId.
- * However, the source of truth for remaining time is always the auction's
- * `endTime` field in MongoDB, NOT the in-memory timeout.  This means:
- *   • After a server restart, remaining time is recalculated from the DB
- *   • Clock drift between setTimeout and real time is irrelevant
- *   • getRemainingTime() always returns the authoritative value
- */
 class TimerService {
   constructor() {
     this._timers = new Map();
   }
-
-  /*
-   * Start (or restart) the countdown for an auction.
-   * Reads endTime from DB and schedules closeAuction accordingly.
-   * If endTime has already passed, closes immediately.
-   */
   async startAuctionTimer(auctionId) {
     this.clearAuctionTimer(auctionId);
 
@@ -82,31 +66,6 @@ class TimerService {
    * authoritative event-sourced record.
    */
   async closeAuction(auctionId) {
-    const claimed = await auctionDao.findAuctionByIdAndUpdateStatusIfActive(auctionId, 'completed');
-    if (!claimed) return;
-
-   * Close an auction: atomically transition status to 'completed',
-   * determine winner from the Bid model, create timeline event,
-   * and notify the room via socket.
-   *
-   * ── Race condition prevention ──────────────────────────────────────
-   * We use findOneAndUpdate with a { status: 'active' } filter so that
-   * this operation is atomic — if a concurrent bid processBid() checks
-   * status and writes before we do, findOneAndUpdate returns null and
-   * we bail out (the bidder won the race).  This ensures we never declare
-   * a winner while a bid is still in-flight.
-   *
-   * Winner is determined from the persisted Bid records, not from the
-   * auction's in-memory `highestBidder` field, because the Bid model is
-   * the authoritative event-sourced record of all bids.
-   */
-  async closeAuction(auctionId) {
-    /*
-     * Atomically claim the 'completed' status.  Only succeeds if the
-     * auction is still 'active' — a concurrent bid might have snuck in
-     * and changed something, in which case we bail and let the next
-     * timer tick handle it (or the bid engine can detect it).
-     */
     const claimed = await auctionDao.findAuctionByIdAndUpdateStatusIfActive(auctionId, 'completed');
     if (!claimed) return;
 
