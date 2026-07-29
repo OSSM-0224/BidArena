@@ -34,7 +34,7 @@ const Register = () => {
           tag="[REQ_STR_01]"
           placeholder="E.G. ALEXANDER THORNE"
           error={errors.fullName?.message}
-          {...register("fullName", {
+          {...register("name", {
             required: "Name is required",
             minLength: { value: 2, message: "Name is too short" },
           })}
@@ -55,7 +55,6 @@ const Register = () => {
           })}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             label="Access Key"
             type="password"
@@ -66,17 +65,6 @@ const Register = () => {
               minLength: { value: 8, message: "Minimum 8 characters" },
             })}
           />
-          <Input
-            label="Verify Key"
-            type="password"
-            placeholder="********"
-            error={errors.confirmPassword?.message}
-            {...register("confirmPassword", {
-              required: "Please confirm your password",
-              validate: (value) => value === password || "Keys do not match",
-            })}
-          />
-        </div>
 
         <div className="flex items-start gap-4 py-4 px-2 bg-surface-container-low/50 ">
           <input
