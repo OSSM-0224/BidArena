@@ -25,9 +25,6 @@ export const registerBidHandlers = (io, socket) => {
 
       const updatedAuction = await bidEngineService.processBid(auctionId, socket.user._id, amount);
 
-      // Delegates to the bid engine which does all business logic + atomic update
-      const updatedAuction = await bidEngineService.processBid(auctionId, socket.user._id, amount);
-
       // Broadcast the updated state to everyone in the room
       io.to(auctionId).emit('bid-update', {
         auctionId,
