@@ -83,3 +83,62 @@ export const incrementBidCount = async (auctionId) => {
 
   return updatedAuction;
 };
+
+export const incrementSpectatorCount = async (auctionId) => {
+  const updatedAuction = await Auction.findByIdAndUpdate(
+    auctionId,
+    { $inc: { spectatorCount: 1 } },
+    { new: true }
+  );
+  return updatedAuction;
+};
+
+export const decrementSpectatorCount = async (auctionId) => {
+  const updatedAuction = await Auction.findByIdAndUpdate(
+    auctionId,
+    { $inc: { spectatorCount: -1 } },
+    { new: true }
+  );
+  return updatedAuction;
+};
+
+/*
+ * Atomic compare-and-swap: only updates currentHighestBid if it still matches
+ * the expected value. Used by bidEngine to prevent race conditions between
+ * concurrent bid requests.
+ */
+export const findAuctionByIdAndUpdateIfHighestBid = async (
+  id,
+  expectedCurrentBid,
+  newBidAmount,
+  bidderId
+) => {
+  const updatedAuction = await Auction.findOneAndUpdate(
+    {
+      _id: id,
+      currentHighestBid: expectedCurrentBid,
+    },
+    {
+      $set: {
+        currentHighestBid: newBidAmount,
+        highestBidder: bidderId,
+      },
+    },
+    { new: true }
+  );
+  return updatedAuction;
+};
+
+/*
+ * Atomically transition auction status — only succeeds if current status
+ * is 'active'. Used by timer.service to safely claim the 'completed' state
+ * without racing against a concurrent bid processing in bidEngine.
+ */
+export const findAuctionByIdAndUpdateStatusIfActive = async (id, newStatus) => {
+  const updatedAuction = await Auction.findOneAndUpdate(
+    { _id: id, status: 'active' },
+    { $set: { status: newStatus } },
+    { new: true }
+  );
+  return updatedAuction;
+};
