@@ -6,8 +6,8 @@ import authenticate from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-router.post('/register', registerRules, validate, register);
-router.post('/login', loginRules, validate, login);
+router.post('/register', ...registerRules, validate, register);
+router.post('/login', ...loginRules, validate, login);
 router.post('/logout', logout);
 router.get('/me', authenticate, getMe);
 
