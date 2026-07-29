@@ -1,11 +1,11 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const config = require('./config/env');
-const routes = require('./routes');
-const errorHandler = require('./middlewares/error.middleware');
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import config from './config/env.js';
+import routes from './routes/index.js';
+import errorHandler from './middlewares/error.middleware.js';
 
 const app = express();
 
@@ -24,4 +24,4 @@ app.get('/api/health', (_req, res) => {
 
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

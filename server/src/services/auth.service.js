@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config/env');
-const userDao = require('../dao/user.dao');
+import jwt from 'jsonwebtoken';
+import config from '../config/env.js';
+import * as userDao from '../dao/user.dao.js';
 
 class AuthService {
   generateToken(userId) {
@@ -44,4 +44,4 @@ class AuthService {
   }
 }
 
-module.exports = new AuthService();
+export default new AuthService();
