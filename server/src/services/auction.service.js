@@ -33,9 +33,9 @@ class AuctionService {
 
   async getAuctionsByFilter(status, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
-    const [auctions, total] = await auctionDao.findAuctionsWithPagination(status, skip, limit);
+    const { auctions, totalAuctions } = await auctionDao.findAuctionsWithPagination(status, skip, limit);
 
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(totalAuctions / limit);
 
     return {
       auctions,
