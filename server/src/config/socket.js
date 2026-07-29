@@ -1,7 +1,4 @@
 import { Server } from 'socket.io';
-
-let io = null;
-
 import config from './env.js';
 
 let io = null;
@@ -11,14 +8,14 @@ let io = null;
  * Called once during server bootstrap (see server.js).
  */
 export const initializeSocket = (server) => {
-  io = new Server(server, {
-    cors: {
-      origin: true,
-      credentials: true,
-    },
-  });
+    io = new Server(server, {
+        cors: {
+            origin: true,
+            credentials: true,
+        },
+    });
 
-  return io;
+    return io;
 };
 
 /*
@@ -27,8 +24,8 @@ export const initializeSocket = (server) => {
  * downstream services (e.g. timer.service) can detect startup ordering.
  */
 export const getIO = () => {
-  if (!io) {
-    throw new Error('Socket.io has not been initialised yet');
-  }
-  return io;
+    if (!io) {
+        throw new Error('Socket.io has not been initialised yet');
+    }
+    return io;
 };
