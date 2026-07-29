@@ -8,7 +8,7 @@ let authSlice = createSlice({
     },
     reducers:{
         addUser : (state,action) => {
-            state.payload = action.payload;
+            state.user = action.payload;
             state.isloading = false;
         },
         removeUser :(state) => {
@@ -18,5 +18,5 @@ let authSlice = createSlice({
     }
 })
 
-let {addUser,removeUser} = authSlice.actions;
+export let {addUser,removeUser} = authSlice.actions;
 export default authSlice.reducer;
