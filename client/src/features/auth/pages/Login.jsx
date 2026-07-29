@@ -78,7 +78,7 @@ const Login = () => {
       <div className="mt-10 pt-6 border-t border-outline-variant/20 flex justify-between items-center">
         <span className="font-label-mono font-medium text-[11px] text-outline uppercase">New Recruit?</span>
         <a
-          className="text-secondary font-label-mono text-[12px] hover:underline uppercase tracking-widest flex items-center gap-2"
+          className="text-secondary font-label-mono text-[12px] cursor-pointer uppercase tracking-widest flex items-center gap-2"
           onClick={() => navigate('/register')}
         >
           Create Identity

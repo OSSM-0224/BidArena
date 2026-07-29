@@ -132,7 +132,7 @@ const Register = () => {
           Existing User?
         </span>
         <a
-          className="text-secondary font-label-mono text-[12px] hover:underline uppercase tracking-widest flex items-center gap-2"
+          className="text-secondary font-label-mono text-[12px] cursor-pointer uppercase tracking-widest flex items-center gap-2"
           onClick={() => navigate('/')}
         >
           Sign In Terminal
