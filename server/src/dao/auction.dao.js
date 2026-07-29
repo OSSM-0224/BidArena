@@ -4,7 +4,6 @@ export const createAuction = async (auctionData) => {
   const auction = await Auction.create(auctionData);
   return auction;
 };
-
 export const findAuctionById = async (auctionId) => {
   const auction = await Auction.findById(auctionId);
   return auction;
@@ -17,7 +16,6 @@ export const findAuctionsByStatus = async (status, filters = {}) => {
   const auctions = await Auction.find(query);
   return auctions;
 };
-
 export const findAuctionsWithPagination = async (
   status,
   skip,
