@@ -1,6 +1,21 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+const refreshTokenSchema = new mongoose.Schema({
+  token: {
+    type: String,
+    required: true,
+  },
+  device: {
+    type: String,
+    default: 'unknown',
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -26,6 +41,10 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
+  refreshTokens: {
+    type: [refreshTokenSchema],
+    default: [],
+  },
   auctionsCreated: {
     type: Number,
     default: 0,
@@ -40,11 +59,10 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
