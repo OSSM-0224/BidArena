@@ -1,13 +1,15 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
 import Button from "./Button";
 
 const TopNav = () => {
   const navItems = [
-    { label: "Dashboard", to: "/dashboard" },
+    { label: "Dashboard", to: "/dashboard" ,end:true },
     { label: "Active Bids", to: "/dashboard/active-bids" },
     { label: "Inventory", to: "/dashboard/inventory" },
   ];
+
+  let navigate = useNavigate();
   return (
     <header className="w-full border-b border-outline-variant/40 bg-surface-container-low/60 backdrop-blur">
       <div className="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop h-16 flex items-center justify-between gap-6">
@@ -22,11 +24,12 @@ const TopNav = () => {
         </div>
 
         {/* Nav links */}
-        <nav className="hidden md:flex items-center gap-1 flex-grow">
+        <nav className="hidden md:flex items-center gap-1 grow">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
+              end={item.end}
               className={({ isActive }) =>
                 `px-4 py-2 font-label-mono text-[12px] uppercase tracking-widest transition-colors ${
                   isActive
@@ -47,8 +50,8 @@ const TopNav = () => {
             ABC-99 · 27 STORES
           </div>
 
-          <Button icon="bolt" size="sm" fullWidth={false}>
-            Quick Bid
+           <Button icon="bolt" size="sm" fullWidth={false} onClick={() => navigate("/dashboard/create-bid")}>
+            Create Bid
           </Button>
 
           <div className="w-9 h-9 rounded-full bg-surface-container-low border border-outline-variant flex items-center justify-center shrink-0">

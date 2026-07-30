@@ -26,7 +26,7 @@ const OperationCard = ({
         </span>
       </div>
 
-      <div className="flex-grow flex flex-col justify-between gap-4">
+      <div className="grow flex flex-col justify-between gap-4">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">

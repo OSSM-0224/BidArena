@@ -8,12 +8,14 @@ const Button = ({
   success = false,
   successText = "DONE",
   variant = "primary",
+  size = "md",
+  fullWidth = true,
   className = "",
   disabled,
   ...rest
 }) => {
   const base =
-    "w-full py-5 font-label-mono text-[14px] uppercase tracking-[0.3em] font-bold relative group overflow-hidden transition-colors disabled:cursor-not-allowed";
+    "w-full p-2 font-label-mono text-[14px] uppercase tracking-[0.3em] font-bold relative group overflow-hidden transition-colors disabled:cursor-not-allowed";
 
   const variantClass = success
     ? "bg-secondary text-on-secondary"

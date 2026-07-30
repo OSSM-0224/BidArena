@@ -9,6 +9,8 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import Dashboard from "@/features/dashboard/pages/Dashboard";
 import { useDispatch } from "react-redux";
 import { currentLoggedUser } from "@/features/auth/api/auth.api";
+import CreateBid from "@/features/auction-create/pages/CreateBid";
+import ActiveBids from "@/features/auction-discovery/pages/ActiveBids";
 
 const AppRoutes = () => {
   let dispatch = useDispatch();
@@ -16,8 +18,8 @@ const AppRoutes = () => {
   useEffect(() => {
     (() => {
       dispatch(currentLoggedUser());
-    })()
-  },[])
+    })();
+  }, []);
 
   let router = createBrowserRouter([
     {
@@ -52,13 +54,21 @@ const AppRoutes = () => {
               path: "",
               element: <Dashboard />,
             },
+            {
+              path: "create-bid",
+              element: <CreateBid />,
+            },
+            {
+              path: "active-bids",
+              element: <ActiveBids />,
+            },
           ],
         },
       ],
     },
   ]);
 
-  return <RouterProvider router={router}/>;
+  return <RouterProvider router={router} />;
 };
 
 export default AppRoutes;
