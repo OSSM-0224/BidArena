@@ -4,8 +4,19 @@ import IntelLogItem from '@/components/IntelLogItem'
 import OperationCard from '@/components/OperationCard'
 import StatCard from '@/components/StatCard'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
+  const navigate = useNavigate()
+
+  // Every operation button opens the same reusable room page — bidder mode
+  // for actions that should let the person bid right away, spectator mode
+  // for anything read-only. AuctionRoom still re-syncs against the server
+  // on join either way (FR-7), so this is just about which panel opens by default.
+  const openRoom = (auctionId, mode) => {
+    navigate(`/dashboard/auction/${auctionId}`, { state: { initialMode: mode } })
+  }
+
   return (
      <div className="space-y-10">
       {/* Welcome banner */}
@@ -93,7 +104,9 @@ const Dashboard = () => {
               stat2Value="00:42:12"
               stat2Tone="error"
               primaryAction="Place Bid"
+              onPrimaryAction={() => openRoom("IDX-4XX7XB", "bidder")}
               secondaryAction="View Intel"
+              onSecondaryAction={() => openRoom("IDX-4XX7XB", "spectator")}
             />
  
             <OperationCard
@@ -108,7 +121,9 @@ const Dashboard = () => {
               stat2Value="06:14:00"
               stat2Tone="secondary"
               primaryAction="Set Alert"
+              onPrimaryAction={() => openRoom("IDX-3729BF", "spectator")}
               secondaryAction="Details"
+              onSecondaryAction={() => openRoom("IDX-3729BF", "spectator")}
             />
           </div>
  
