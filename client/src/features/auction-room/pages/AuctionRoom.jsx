@@ -75,7 +75,7 @@ const AuctionRoom = () => {
   const config = statusConfig[state.status] ?? statusConfig.active;
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-surface space-y-6">
       {/* Header: product / seller info + status */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div className="flex items-start gap-4">
