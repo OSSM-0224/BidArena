@@ -31,7 +31,7 @@ export const registerAuctionRoomHandlers = (io, socket) => {
       socket.join(auctionId);
       socket.currentAuctionId = auctionId;
 
-      auctionDao.incrementSpectatorCount(auctionId).catch(() => {});
+      auctionDao.incrementSpectatorCount(auctionId).catch(() => { });
 
       // Fetch supplementary data in parallel
       const [bids, timeline] = await Promise.all([
@@ -62,7 +62,7 @@ export const registerAuctionRoomHandlers = (io, socket) => {
           socket.currentAuctionId = null;
         }
 
-        auctionDao.decrementSpectatorCount(auctionId).catch(() => {});
+        auctionDao.decrementSpectatorCount(auctionId).catch(() => { });
       }
     } catch (err) {
       console.error('[AuctionRoom] Error leaving room:', err.message);
