@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SegmentControl from "@/components/SegmentControl";
 import AuctionCard from "@/components/AuctionCard";
 
@@ -8,9 +9,9 @@ const filterOptions = [
   { label: "Completed", value: "completed" },
 ];
 
-// Mock data — swap this for your real auction feed. Per FR-5 this should be
-// a fetch on load, and per FR-14/FR-22 kept in sync via Socket.io so cards
-// update live and reconnecting clients catch up automatically.
+// Mock data — swap this for your real auction feed (FR-5: fetch on load).
+// AuctionRoom re-syncs its own authoritative state on open, so this list
+// only needs enough to render the cards.
 const auctions = [
   {
     id: "IDX-4XX7XB",
@@ -75,8 +76,19 @@ const auctions = [
 
 const ActiveBids = () => {
   const [filter, setFilter] = useState("active");
+  const navigate = useNavigate();
 
   const filtered = useMemo(() => auctions.filter((a) => a.status === filter), [filter]);
+
+  // Live auctions open straight into bidder mode ("Join Auction"); anything
+  // else opens as a spectator (upcoming: watch + get notified, completed:
+  // view results). AuctionRoom itself still gates real bidding behind FR-7's
+  // server sync regardless of how it was opened.
+  const openRoom = (auction) => {
+    navigate(`/dashboard/auction/${auction.id}`, {
+      state: { initialMode: auction.status === "active" ? "bidder" : "spectator" },
+    });
+  };
 
   return (
     <div className="space-y-8">
@@ -99,7 +111,7 @@ const ActiveBids = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
           {filtered.map((auction) => (
-            <AuctionCard key={auction.id} {...auction} />
+            <AuctionCard key={auction.id} {...auction} onAction={() => openRoom(auction)} />
           ))}
         </div>
       )}
