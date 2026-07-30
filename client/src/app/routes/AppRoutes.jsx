@@ -12,6 +12,7 @@ import { currentLoggedUser } from "@/features/auth/api/auth.api";
 import CreateBid from "@/features/auction-create/pages/CreateBid";
 import ActiveBids from "@/features/auction-discovery/pages/ActiveBids";
 import AuctionRoom from "@/features/auction-room/pages/AuctionRoom";
+import Profile from "@/features/profile/pages/Profile";
 
 const AppRoutes = () => {
   let dispatch = useDispatch();
@@ -66,6 +67,10 @@ const AppRoutes = () => {
             {
               path: "auction/:auctionId",
               element: <AuctionRoom />,
+            },
+            {
+              path: "profile",
+              element: <Profile />,
             },
           ],
         },

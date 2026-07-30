@@ -55,7 +55,7 @@ const TopNav = () => {
           </Button>
 
           <div className="w-9 h-9 rounded-full bg-surface-container-low border border-outline-variant flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-on-surface-variant text-[20px]">
+            <span onClick={() => navigate('/dashboard/profile')} className="material-symbols-outlined text-on-surface-variant text-[20px]">
               person
             </span>
           </div>
