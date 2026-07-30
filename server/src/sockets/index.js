@@ -1,5 +1,4 @@
-import jwt from 'jsonwebtoken';
-import config from '../config/env.js';
+import { verifyAccessToken } from '../utils/jwtHelper.js';
 import { findUserById } from '../dao/user.dao.js';
 import { registerAuctionRoomHandlers } from './auctionRoom.handler.js';
 import { registerBidHandlers } from './bid.handler.js';
@@ -8,18 +7,25 @@ import timerService from '../services/timer.service.js';
 
 /*
  * Socket middleware — authenticate every connection via JWT.
- * The client must provide the token as `auth.token` during the handshake
- * or as a query parameter `?token=...`.
+ * The client must provide the token through one of these methods
+ * (checked in order of precedence):
+ *   1. socket.handshake.auth.token
+ *   2. socket.handshake.query.token
+ *   3. socket.handshake.headers.authorization (Bearer <token>)
  */
 const authenticateSocket = async (socket, next) => {
   try {
-    const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+    const authHeader = socket.handshake.headers?.authorization;
+    const token =
+      socket.handshake.auth?.token ||
+      socket.handshake.query?.token ||
+      (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null);
 
     if (!token) {
       return next(new Error('Authentication required'));
     }
 
-    const decoded = jwt.verify(token, config.jwtSecret);
+    const decoded = verifyAccessToken(token);
     const user = await findUserById(decoded.id);
 
     if (!user) {
