@@ -6,7 +6,7 @@ const TopNav = () => {
   const navItems = [
     { label: "Dashboard", to: "/dashboard" ,end:true },
     { label: "Active Bids", to: "/dashboard/active-bids" },
-    { label: "Inventory", to: "/dashboard/inventory" },
+    { label: "Profile", to: "/dashboard/profile" },
   ];
 
   let navigate = useNavigate();
@@ -54,11 +54,6 @@ const TopNav = () => {
             Create Bid
           </Button>
 
-          <div className="w-9 h-9 rounded-full bg-surface-container-low border border-outline-variant flex items-center justify-center shrink-0">
-            <span onClick={() => navigate('/dashboard/profile')} className="material-symbols-outlined text-on-surface-variant text-[20px]">
-              person
-            </span>
-          </div>
         </div>
       </div>
     </header>
